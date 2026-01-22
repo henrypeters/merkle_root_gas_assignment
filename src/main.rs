@@ -46,11 +46,13 @@ fn main() {
 
     println!("");
     println!("Merkel root using sha256: ___ {}", hex::encode(sha256_root));
+    println!("Merkel root using keccak256: ___ {}", hex::encode(Keccak256_root));
 }
 
 
 fn get_merkle_root_through_sha256(mut hashes: Vec<Vec<u8>>) -> Vec<u8> {
 
+    println!("Using Sha256");
     if hashes.is_empty(){
         return vec![]
     }
@@ -97,6 +99,7 @@ fn get_merkle_root_through_sha256(mut hashes: Vec<Vec<u8>>) -> Vec<u8> {
 }
 
 fn get_merkle_root_through_kecheck(mut hashes: Vec<Vec<u8>>) -> Vec<u8> {
+    println!("Using Keccak256");
   if hashes.is_empty(){
         return vec![]
     }
