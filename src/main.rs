@@ -52,6 +52,7 @@ fn main() {
 
 fn get_merkle_root_through_sha256(mut hashes: Vec<Vec<u8>>) -> Vec<u8> {
 
+    println!("");
     println!("Using Sha256");
     if hashes.is_empty(){
         return vec![]
@@ -99,6 +100,7 @@ fn get_merkle_root_through_sha256(mut hashes: Vec<Vec<u8>>) -> Vec<u8> {
 }
 
 fn get_merkle_root_through_kecheck(mut hashes: Vec<Vec<u8>>) -> Vec<u8> {
+    println!("");
     println!("Using Keccak256");
   if hashes.is_empty(){
         return vec![]
