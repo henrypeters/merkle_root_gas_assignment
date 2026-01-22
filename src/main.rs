@@ -1,7 +1,9 @@
 use std::hash;
 
-use ethers::utils::hex;
+use ethers::utils::{hex, keccak256};
 use sha2::{Sha256, Digest};
+use sha3::Keccak256;
+// use sha3::{Keccak256};
 
 struct Transaction {
     tx: String
@@ -31,14 +33,16 @@ fn main() {
         let mut hash = Sha256::new();
         hash.update(i.tx.clone());
         let result = hash.finalize().to_vec();
-        // println!("{:?}", result);
         hashed_trxn.push(result);
     }
 
     for hash in hashed_trxn.iter() {
         println!("{:?}", hex::encode(hash));
     }
-    let sha256_root = get_merkle_root_through_sha256(hashed_trxn);
+
+
+    let sha256_root = get_merkle_root_through_sha256(hashed_trxn.clone());
+    let Keccak256_root = get_merkle_root_through_kecheck(hashed_trxn);
 
     println!("");
     println!("Merkel root using sha256: ___ {}", hex::encode(sha256_root));
@@ -57,6 +61,8 @@ fn get_merkle_root_through_sha256(mut hashes: Vec<Vec<u8>>) -> Vec<u8> {
         
         let mut i = 0;
 
+        println!("");
+        println!("CURRENT LEVEL");
         for (i, h) in hashes.iter().enumerate(){
             println!("Transaction {}: {}", i, hex::encode(h))
         }
@@ -87,5 +93,50 @@ fn get_merkle_root_through_sha256(mut hashes: Vec<Vec<u8>>) -> Vec<u8> {
 
     hashes.pop().unwrap()
 
+
+}
+
+fn get_merkle_root_through_kecheck(mut hashes: Vec<Vec<u8>>) -> Vec<u8> {
+  if hashes.is_empty(){
+        return vec![]
+    }
+    
+    
+    while hashes.len() > 1{
+        let mut next_level = Vec::new();
+        
+        let mut i = 0;
+
+        println!("");
+        println!("CURRENT LEVEL");
+        for (i, h) in hashes.iter().enumerate(){
+            println!("Transaction {}: {}", i, hex::encode(h))
+        }
+
+        while i < hashes.len() {
+
+            if i + 1 < hashes.len() {
+
+            println!("");
+            println!("Hashing ==[{}
+            || {}]==", hex::encode(hashes[i].clone()), hex::encode(hashes[i + 1].clone()));
+
+                let mut hasher = Keccak256::new();
+                hasher.update(&hashes[i]);
+                hasher.update(&hashes[i + 1]);
+                let result: Vec<u8> = hasher.finalize().to_vec();
+                println!("");
+                println!("Result: {}", hex::encode(&result));
+                next_level.push(result);
+            }else {
+                next_level.push(hashes[i].clone());
+            }
+            
+            i += 2;
+        }
+        hashes = next_level;
+    }
+
+    hashes.pop().unwrap()
 
 }
